@@ -9,6 +9,7 @@ members = [
   "panic-serial",
   "usbarmory",
   "usbarmory-rt",
+  "custom",
 ]
 
 [profile.dev]
