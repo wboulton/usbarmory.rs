@@ -15,10 +15,12 @@ use usbarmory::{println, serial::Serial};
 // like `#[rtic::app]`
 #[no_mangle]
 fn main() -> ! {
-    println!("Hello, world!");
+    loop {
+        println!("Hello, world!");
 
-    Serial::flush();
+        Serial::flush();
 
-    // then reset the board to return to the u-boot console
-    usbarmory::reset()
+        // then reset the board to return to the u-boot console
+        usbarmory::reset()
+    }
 }
