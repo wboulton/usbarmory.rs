@@ -9,16 +9,26 @@ software attacks like orion and trust zone mitigations
 
 Both of these seem to be related to http or api verification to build servers. This allows attackers to gain access to a build server and alter code before updates are pushed to production and distributed to users. The goal of this project is to mitigate the ability for malicious actors to embed undetected malware into trusted software products. 
 
-### threat
+### threats
+  - injecting malicious signed binaries before packaging a project or malicious code before compilation
+  - alter steps in the supply chain to add malware before being passed to the next step (i.e. changing a linker to link in vulnerable versions of a package)
+  - provide a changed product before delivery
+
   If a user is able to gain access to a build server, like the Orion build servers or the JetBrains TeamCity servers, they can insert malicious code into trusted programs and sign binaries so they are virtually indetectable (at least hidden from any anti-malware). This can result in malware being distributed to user's computers through trusted programs with unknowingly malicious code.
 
-  A malicious actor may also be able to alter signing keys if they are not stored properly. This would allow an attacker to esure their malware does not get detected when a program is compiled or distributed. This causes the same threat of malware being distributed within trusted programs. 
+  A malicious actor may also be able to alter the way that a binary is compiled or signed so that malicious code is added to the final product while being prepared by trusted sources. This would mean that the build system inadvertenlty adds malware into the final product before it can be distributed to customers. 
+
+  A malicious actor may also be able to forge a trusted software product and replace the known-good product with their malicious version of the software. This can then be distributed through trusted vendors to unknowing consumers. 
 
 ### accessibility 
   These attacks require vulnerabilities in build server verification methods, allowing malicious actors like APTs to gain access to the servers to insert malicious code into trusted programs. Unfortunately, exploits like this are not uncommmon and, with a lack of further protections, critical vulnerabilities as they allow for malware to be widely distributed and undetectable. 
 
 ### mitigation
-  To prevent injection of insecure code an ephemeral build environment can be created where a build environment is flashed (and verified through secure boot) to a trustzone enabled device and binaries are compiled and signed in the secure world before wiping the entire device. By keeping the verification/signing keys in the secure world or immutable storage, binaries can be signed and compared against known-good builds innaccessbile to attackers.  
+  To prevent injection of insecure code an ephemeral build environment can be created where a build environment is flashed (and verified through secure boot) to a trustzone enabled device and binaries are compiled and signed in the secure world before wiping the entire device. By keeping the verification/signing keys in the secure world or immutable storage, binaries can be signed and compared against known-good builds innaccessbile to attackers.
+
+  By using firmware only accessible to the secure world to compile binaries, and re-flashing this firmware after every use, we can prevent attackers from changing the way that code is compiled by limiting a user's access to the specifications of this step. This, along with the use of secure boot on compiler devices, can ensure that altered build processes do not make it into the build system.
+
+  By signing and verifying final binaries in the secure world, we prevent a user's access to sign and verify binaries that are not created by our build system. This will make it difficult to interchange a malicious product with our known-good product.
 
 ### result
   This environment would prevent attackers who have gained access to build servers from modifying the build envrionment and binary verification as build firmware can be verified independently before use, esuring it matches known-good compilation firmware. This can also ensure tha created binaries are signed in the secure world, ensuring that the signature cannot be modified by attackers who gained access to build servers. 
